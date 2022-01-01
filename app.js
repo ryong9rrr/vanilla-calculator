@@ -1,80 +1,50 @@
-const total = document.querySelector("#total");
-const digits = document.querySelectorAll(".digit");
-const operations = document.querySelectorAll(".operation");
-const modifiers = document.querySelector(".modifiers");
-let store = {
-  total: 0,
-  first: "",
-  second: "",
-  currentOper: "",
-};
+// [X] AC(All Clear)버튼을 누르면 0으로 초기화 한다.
+// [] 2개의 숫자에 대해 덧셈이 가능하다.
+// [] 2개의 숫자에 대해 뺄셈이 가능하다.
+// [] 2개의 숫자에 대해 곱셈이 가능하다.
+// [] 2개의 숫자에 대해 나눗셈이 가능하다.
+// [X] 숫자는 한번에 최대 3자리 수까지 입력 가능하다.
+// [] 계산 결과를 표현할 때 소수점 이하는 버림한다.
 
-function operateNumber() {
-  const a = Number(store.first);
-  const op = store.currentOper;
-  const b = Number(store.second);
-  store.currentOper = "=";
-  let result;
-  if (op === "+") {
-    result = a + b;
-  } else if (op === "-") {
-    result = a - b;
-  } else if (op === "X") {
-    result = a * b;
-  } else if (op === "/") {
-    result = Math.floor(a / b);
+const digits = document.querySelector(".digits");
+const operations = document.querySelector(".operations");
+const modifiers = document.querySelector(".modifiers");
+const DISPLAY = document.querySelector("#total");
+const MAX_NUMBER_LENGTH = 3;
+
+// [X] AC(All Clear)버튼을 누르면 0으로 초기화 한다.
+function clearNumber({ target: { value } }) {
+  DISPLAY.innerText = "0";
+}
+
+function putNumber({ target }) {
+  // 현재 0이라면 숫자를 그냥 대입한다.
+  if (DISPLAY.innerText === "0") {
+    DISPLAY.innerText = target.innerText;
+    return;
   }
-  store.total = result;
-  total.innerHTML = store.total;
+  // [X] 숫자는 한번에 최대 3자리 수까지 입력 가능하다.
+  const nums = document
+    .querySelector("#total")
+    .innerText.split("+" || "-" || "X" || "/");
+  if (
+    nums[0].length >= MAX_NUMBER_LENGTH ||
+    (nums[1] && nums[1].length >= MAX_NUMBER_LENGTH)
+  ) {
+    alert("3자리 수 까지 입력가능해요.");
+    return;
+  }
+  DISPLAY.innerText += target.innerText;
+}
+
+function putOperation({ target }) {
+  console.log(target);
 }
 
 function App() {
-  modifiers.addEventListener("click", (e) => {
-    store = {
-      total: 0,
-      first: "",
-      second: "",
-      currentOper: "",
-    };
-    total.innerHTML = store.total;
-  });
-
-  digits.forEach((digit) =>
-    digit.addEventListener("click", (e) => {
-      const value = e.target.innerText;
-      if (store.currentOper === "=") {
-        return;
-      }
-
-      if (value === "0" && (!store.first || !store.second)) {
-        return;
-      }
-
-      if (!store.second && !store.currentOper && store.first.length < 3) {
-        store.first += value;
-      } else if (store.first && store.currentOper && store.second.length < 3) {
-        store.second += value;
-      }
-      total.innerHTML = `${store.first}${store.currentOper}${store.second}`;
-    })
-  );
-
-  operations.forEach((operation) =>
-    operation.addEventListener("click", (e) => {
-      const value = e.target.innerText;
-      if (value === "=") {
-        if (store.first && store.currentOper && store.second) {
-          operateNumber();
-        }
-        return;
-      }
-
-      if (store.first && !store.second) {
-        store.currentOper = value;
-        total.innerHTML = `${store.first}${store.currentOper}`;
-      }
-    })
-  );
+  modifiers.addEventListener("click", clearNumber);
+  digits.addEventListener("click", putNumber);
+  operations.addEventListener("click", putOperation);
 }
 
 App();
