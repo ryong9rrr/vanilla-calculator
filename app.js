@@ -106,6 +106,13 @@ function putOperation({ target }) {
     DISPLAY.innerText = result;
     return;
   }
+  // 의도적으로 3자리수가 넘어가는 숫자를 만들고 연산을 하려는 경우
+  if (
+    target.innerText !== "=" &&
+    DISPLAY.innerText.length > MAX_NUMBER_LENGTH + 1
+  ) {
+    return alert("3자리 수 까지 입력가능해요.");
+  }
 
   // 연산자를 눌렀는데 연산자를 또 누르는 경우, 연산자 체인지
   if (
