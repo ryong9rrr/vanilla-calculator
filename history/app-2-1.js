@@ -6,6 +6,8 @@
 // [X] 숫자는 한번에 최대 3자리 수까지 입력 가능하다.
 // [X] 계산 결과를 표현할 때 소수점 이하는 버림한다.
 
+// 음수에 대한 예외처리
+
 const digits = document.querySelector(".digits");
 const operations = document.querySelector(".operations");
 const modifiers = document.querySelector(".modifiers");
