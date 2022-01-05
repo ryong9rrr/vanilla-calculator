@@ -1,3 +1,11 @@
 /.cache
 
 /dist
+
+/node_modules
+
+/cypress/fixtures
+
+/cypress/plugins
+
+/cypress/support

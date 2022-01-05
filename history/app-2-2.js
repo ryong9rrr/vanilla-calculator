@@ -6,6 +6,8 @@
 // [X] 숫자는 한번에 최대 3자리 수까지 입력 가능하다.
 // [X] 계산 결과를 표현할 때 소수점 이하는 버림한다.
 
+// 의도적으로 3자리수가 넘어가는 숫자를 만들고 연산을 하려는 경우에 대한 버그픽스
+
 const digits = document.querySelector(".digits");
 const operations = document.querySelector(".operations");
 const modifiers = document.querySelector(".modifiers");
@@ -65,7 +67,7 @@ function putNumber({ target }) {
 }
 
 function putOperation({ target }) {
-  if (target.innerText !== "=" && isNaN(DISPLAY.innerText[0])) {
+  if (isNaN(DISPLAY.innerText[0])) {
     return alert("자연수 끼리의 사칙연산만 가능해요.");
   }
 
@@ -109,7 +111,7 @@ function putOperation({ target }) {
   // 의도적으로 3자리수가 넘어가는 숫자를 만들고 연산을 하려는 경우
   if (
     target.innerText !== "=" &&
-    DISPLAY.innerText.length > MAX_NUMBER_LENGTH
+    DISPLAY.innerText.length > MAX_NUMBER_LENGTH + 1
   ) {
     return alert("3자리 수 까지 입력가능해요.");
   }
