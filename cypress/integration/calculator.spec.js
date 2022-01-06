@@ -1,7 +1,23 @@
-// 기존 요구사항에 대한 테스트 케이스 더 추가할 것 (자리 수 올려서도 추가해보고.. 등등)
-// 생각한 테스트 케이스 추가할 것
+const clickAllOperationsCheck = (checkFn) => {
+  return ["+", "-", "X", "/"].map((oper) => {
+    cy.get(".operation").contains(oper).click();
+    checkFn();
+  });
+};
 
-const operation = ["+", "-", "X", "/"];
+const clickAllNumbersCheck = (checkFn) => {
+  const numbers = [];
+  for (let i = 0; i < 10; i++) {
+    numbers.push(i);
+  }
+  return numbers.map((number) => {
+    cy.get(".digit").contains(`${number}`).click();
+    checkFn();
+  });
+};
+
+const clickEqual = () => cy.get(".equal").click();
+const clickClear = () => cy.get(".modifier").click();
 
 describe("계산기 앱 테스트", () => {
   beforeEach(() => {
@@ -12,7 +28,7 @@ describe("계산기 앱 테스트", () => {
     cy.get(".digit").contains("5").click();
     cy.get(".operation").contains("+").click();
     cy.get(".digit").contains("3").click();
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     //cy.get("#total").invoke("text").should("eq", "8");
     cy.get("#total").should("have.text", "8");
   });
@@ -21,7 +37,7 @@ describe("계산기 앱 테스트", () => {
     cy.get(".digit").contains("5").click();
     cy.get(".operation").contains("-").click();
     cy.get(".digit").contains("3").click();
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     //cy.get("#total").invoke("text").should("eq", "8");
     cy.get("#total").should("have.text", "2");
   });
@@ -30,7 +46,7 @@ describe("계산기 앱 테스트", () => {
     cy.get(".digit").contains("5").click();
     cy.get(".operation").contains("X").click();
     cy.get(".digit").contains("3").click();
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     //cy.get("#total").invoke("text").should("eq", "8");
     cy.get("#total").should("have.text", "15");
   });
@@ -39,14 +55,14 @@ describe("계산기 앱 테스트", () => {
     cy.get(".digit").contains("6").click();
     cy.get(".operation").contains("/").click();
     cy.get(".digit").contains("3").click();
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     //cy.get("#total").invoke("text").should("eq", "8");
     cy.get("#total").should("have.text", "2");
   });
 
   it("AC(All Clear)버튼을 누르면 0으로 초기화 한다.", () => {
     cy.get(".digit").contains("6").click();
-    cy.get(".modifier").contains("AC").click();
+    clickClear();
     cy.get("#total").should("have.text", "0");
   });
 
@@ -78,7 +94,7 @@ describe("계산기 앱 테스트", () => {
     cy.get(".digit").contains("7").click();
     cy.get(".operation").contains("/").click();
     cy.get(".digit").contains("3").click();
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     //cy.get("#total").invoke("text").should("eq", "8");
     cy.get("#total").should("have.text", "2");
   });
@@ -111,7 +127,7 @@ describe("계산기 앱 테스트", () => {
   it("숫자가 1개 일 때, = 클릭 테스트", () => {
     // 숫자가 하나만 입력되었을 때 =를 누르는 경우, 그 숫자가 그대로여야 합니다.
     cy.get(".digit").contains("1").click();
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     cy.get("#total").should("have.text", "1");
   });
 
@@ -122,16 +138,9 @@ describe("계산기 앱 테스트", () => {
     // 일단 처음 값이 0인지 확인
     cy.get("#total").should("have.text", "0");
     // 모든 연산자 눌러보기
-    cy.get(".operation").contains("+").click();
-    cy.get("#total").should("have.text", "0");
-    cy.get(".operation").contains("-").click();
-    cy.get("#total").should("have.text", "0");
-    cy.get(".operation").contains("X").click();
-    cy.get("#total").should("have.text", "0");
-    cy.get(".operation").contains("/").click();
-    cy.get("#total").should("have.text", "0");
+    clickAllOperationsCheck(() => cy.get("#total").should("have.text", "0"));
     // "=" 눌러보기
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     cy.get("#total").should("have.text", "0");
   });
 
@@ -146,16 +155,11 @@ describe("계산기 앱 테스트", () => {
     cy.get(".digit").contains("2").click();
     cy.get(".digit").contains("3").click();
     // =를 제외한 연산자 모두 클릭
-    cy.get(".operation").contains("+").click();
-    cy.get("#total").should("have.text", "123X123");
-    cy.get(".operation").contains("-").click();
-    cy.get("#total").should("have.text", "123X123");
-    cy.get(".operation").contains("X").click();
-    cy.get("#total").should("have.text", "123X123");
-    cy.get(".operation").contains("/").click();
-    cy.get("#total").should("have.text", "123X123");
+    clickAllOperationsCheck(() =>
+      cy.get("#total").should("have.text", "123X123")
+    );
     // = 를 누르면 정답 출력
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     cy.get("#total").should("have.text", "15129");
   });
 
@@ -165,7 +169,7 @@ describe("계산기 앱 테스트", () => {
     cy.get(".digit").contains("1").click();
     cy.get(".digit").contains("2").click();
     cy.get(".operation").contains("+").click();
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     cy.get("#total").should("have.text", "12+");
   });
 
@@ -192,23 +196,17 @@ describe("계산기 앱 테스트", () => {
     cy.get(".digit").contains("3").click();
     cy.get(".operation").contains("-").click();
     cy.get(".digit").contains("9").click();
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     cy.get("#total").should("have.text", "-6");
     // 1. "=" 버튼 눌러보기
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     cy.get("#total").should("have.text", "-6");
     // 2. 모든 숫자 눌러보기
-    for (let i = 0; i < 10; i++) {
-      cy.get(".digit").contains(`${i}`).click();
-      cy.get("#total").should("have.text", "-6");
-    }
+    clickAllNumbersCheck(() => cy.get("#total").should("have.text", "-6"));
     // 3. 연산자 눌러보기
-    for (const oper of operation) {
-      cy.get(".operation").contains(oper).click();
-      cy.get("#total").should("have.text", "-6");
-    }
+    clickAllOperationsCheck(() => cy.get("#total").should("have.text", "-6"));
     // 4. AC버튼 클릭
-    cy.get(".modifier").contains("AC").click();
+    clickClear();
     cy.get("#total").should("have.text", "0");
   });
 
@@ -223,23 +221,19 @@ describe("계산기 앱 테스트", () => {
     cy.get(".digit").contains("1").click();
     cy.get(".digit").contains("2").click();
     cy.get(".digit").contains("3").click();
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     cy.get("#total").should("have.text", "15129");
     // 1. "=" 버튼은 입력 가능합니다.
-    cy.get(".operation").contains("=").click();
+    clickEqual();
     cy.get("#total").should("have.text", "15129");
     // 2. 모든 숫자 눌러보기
-    for (let i = 0; i < 10; i++) {
-      cy.get(".digit").contains(`${i}`).click();
-      cy.get("#total").should("have.text", "15129");
-    }
+    clickAllNumbersCheck(() => cy.get("#total").should("have.text", "15129"));
     // 3. 연산자 눌러보기
-    for (const oper of operation) {
-      cy.get(".operation").contains(oper).click();
-      cy.get("#total").should("have.text", "15129");
-    }
+    clickAllOperationsCheck(() =>
+      cy.get("#total").should("have.text", "15129")
+    );
     // 4. AC버튼 눌러보기
-    cy.get(".modifier").contains("AC").click();
+    clickClear();
     cy.get("#total").should("have.text", "0");
   });
 });
