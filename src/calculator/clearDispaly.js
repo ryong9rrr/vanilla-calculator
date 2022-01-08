@@ -1,5 +1,5 @@
 import { DISPLAY } from "./utils.js";
 
 export default function clearDisplay() {
-  DISPLAY.innerText = "0";
+  DISPLAY.textContent = "0";
 }
